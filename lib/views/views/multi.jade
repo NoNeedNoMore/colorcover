@@ -1,0 +1,17 @@
+extends ../layout.jade
+block content
+	.container
+		ul.nav.nav-pills
+			li.active(role="presentation"): a(href="#gamesToPlay" role="tab" data-toggle="tab") Вызовы на игру
+			li(role="presentation"): a(href="#activeGames" role="tab" data-toggle="tab") Идущие игры
+			li(role="presentation"): a(href="#readyGames" role="tab" data-toggle="tab") Завершенные игры
+		.tab-content
+			#gamesToPlay.tab-pane.active(role="tabpanel")
+				br
+				.games(data-model="games" data-matrix="callGames")
+			#activeGames.tab-pane(role="tabpanel")
+				br
+				.matrix(data-model="games" data-matrix="activeGames")
+			#readyGames.tab-pane(role="tabpanel")
+				br
+				.matrix(data-model="games" data-matrix="games")

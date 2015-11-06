@@ -1,0 +1,57 @@
+extends ../layout.jade
+block content
+	.container
+		if id
+			.colorcover(data-model="games" data-matrix="activeGames" data-id=id)
+		else
+			ul.nav.nav-pills
+				li.active(role="presentation"): a(href="#newGame" role="tab" data-toggle="tab") Быстрая игра
+				li(role="presentation"): a(href="#gamesToPlay" role="tab" data-toggle="tab") Вызовы на игру
+				li(role="presentation"): a(href="#games" role="tab" data-toggle="tab") Идущие игры
+			.tab-content
+				#newGame.tab-pane.active(role="tabpanel")
+					br
+					if session.user
+						form.form-horizontal(role="form")
+							button#btnStart.btn.btn-success(type="submit") Начать
+						#message
+					else
+						h2: a(href="/users.html/services/login") Войдите или зарегистрируйтесь чтобы играть
+				#gamesToPlay.tab-pane(role="tabpanel")
+					br
+					.matrix(data-model="games" data-opts="callGames")
+				#games.tab-pane(role="tabpanel")
+					br
+					.matrix(data-model="games" data-opts="activeGames")
+		.game
+block scripts
+	script(type="text/javascript").
+		$(function(){	
+			$('form').on('submit', function(e) {
+				$.ajax({
+					url: 'games.json/services/fastgame',
+					type: 'post',
+					dataType: 'json',
+					data: {x: +$('#x').val(), y: +$('#y').val()}
+				}).done( function(data) {
+					var gameid = data.id
+					$('form').hide();
+					if (lib.socket.connected) {
+						lib.socket.emit('join', {room: 'game' + gameid});
+					};
+					lib.socket
+						.on('connect', function () {
+							lib.socket.emit('join', {room: 'game' + gameid});
+						})
+						.on('start', function(data){
+							if (data.room == 'game' + gameid) {
+								window.location = '/games.html/' + gameid;
+							};
+						});
+					data.isReady ? 
+						( window.location = '/games.html/' + gameid ) : 
+						( $('#message').html('Ожидание противника...') );
+				});
+				return false;
+			});
+		});

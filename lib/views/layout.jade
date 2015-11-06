@@ -1,0 +1,68 @@
+doctype html
+html(lang="ru")
+	include ./includes/head.jade
+	body(data-version="1" data-user=session.user data-username=session.username)
+		#wrap
+			include ./includes/menu.jade
+			#main
+				#games
+				#content
+					block content
+		#footer
+			p.text-muted.text-center
+		script(src="/vendor/jquery-1.10.2.min.js")
+		link(href="/vendor/select2-3.5.1/select2.css" rel="stylesheet")
+		script(src="/vendor/select2-3.5.1/select2.min.js")
+		script(src="/vendor/select2-3.5.1/select2_locale_ru.js")
+		script(src="/vendor/bootstrap-3.2.0/js/bootstrap.min.js")
+		script(src="/socket.io/socket.io.js")
+		script(src="/js/config.js")
+		script(src="/js/colorcover.js")
+		script(src="/js/games.js")
+		script(src="/js/lib.js")
+		script(src="/js/matrix.js")
+		script(src="/js/posts.js")
+		script(src="/js/topics.js")
+		script(type="text/javascript").
+			$(function(){
+				lib.initByClass($('body'));	
+				$('#fastLogin').on('submit', function(e) {
+					var username = $(this).find('.input-username').val(),
+						password = $(this).find('.input-password').val();
+					if (!username || !password) {
+						window.location = '/users.html/services/login';
+						return false;
+					};
+					$.ajax({
+						url: '/users.json/services/login',
+						type: 'post',
+						dataType: 'json',
+						data: {
+							username: username,
+							password: password
+						}
+					}).done(function(data) {
+						if (data && data.error) {
+							window.location = '/users.html/services/login';
+						} else {
+							localStorage.username = data.username;
+							localStorage.roles = data.roles;
+							if ('#{view}' == 'login') {window.location.href = '/index.html'; } else {window.location.reload(); };
+						};
+					});
+					return false;
+				});
+				$('a.logout').on('click', function(e) {
+					$.ajax({
+						url: $(this).attr('href'),
+						type: 'post',
+						dataType: 'json'
+					}).done(function(data) {
+						delete localStorage.username;
+						delete localStorage.roles;
+						window.location.reload();
+					});
+					return false;
+				});
+			});
+		block scripts

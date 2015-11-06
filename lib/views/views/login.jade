@@ -1,0 +1,110 @@
+extends ../layout.jade
+block content
+	.container
+		ul.nav.nav-pills(role="tablist")
+			li(role="presentation"): a(href="#loginForm" role="tab" data-toggle="tab") Вход
+			li.active(role="presentation"): a(href="#registrationForm" role="tab" data-toggle="tab") Регистрация
+		div.tab-content
+			div#loginForm.tab-pane(role="tabpanel")
+				br
+				p.form-error.bg-danger.container
+				form.form-horizontal(role="form")
+					.form-group
+						label.col-sm-2.control-label(for="loginOrEmail") Логин или мыло
+						.col-sm-10
+							input#loginOrEmail.form-control(type="text" name="username" placeholder="Логин или мыло")
+					.form-group
+						label.col-sm-2.control-label(for="password") Пароль
+						.col-sm-10
+							input#password.form-control(type="password" name="password" placeholder="Пароль")
+					.form-group
+						.col-sm-offset-2.col-sm-10
+							button#btnLogin.btn.btn-success(type="submit") Войти
+			div#registrationForm.tab-pane.active(role="tabpanel")
+				br
+				p.form-error.bg-danger.container
+				form.form-horizontal(role="form")
+					.form-group.required
+						label.col-sm-2.control-label(for="login") Логин
+						.col-sm-10
+							input#login.form-control(type="text" placeholder="Логин")
+					.form-group.required
+						label.col-sm-2.control-label(for="email") Мыло
+						.col-sm-10
+							input#email.form-control(type="text" placeholder="Мыло")
+					.form-group.required
+						label.col-sm-2.control-label(for="newPassword") Пароль
+						.col-sm-10
+							input#newPassword.form-control(type="password" placeholder="Пароль")
+					.form-group.required
+						label.col-sm-2.control-label(for="repPassword") Пароль еще раз
+						.col-sm-10
+							input#repPassword.form-control(type="password" placeholder="Пароль")
+					.form-group.required
+						.col-sm-offset-2.col-sm-10
+							button#btnRegistration.btn.btn-success(type="submit") Зарегистрироваться			
+block scripts
+	script(type="text/javascript").
+		$(function(){
+			$('#loginForm').on('submit', function(e){
+				var login = $('#loginOrEmail'),
+					password = $('#password'),
+					$error = $(this).find('.form-error');
+				login.val() ? login.parents('.form-group').removeClass('has-error') : login.parents('.form-group').addClass('has-error');
+				password.val() ? password.parents('.form-group').removeClass('has-error') : password.parents('.form-group').addClass('has-error');
+				if (!login.val() || !password.val()) {return false; };
+				$.ajax({
+					url: '/users.json/services/login',
+					type: 'post',
+					dataType: 'json',
+					data: {
+						username: login.val(),
+						password: password.val()
+					}
+				}).done(function(data) {
+					if (data && data.err) {
+						$error.html(data.err);
+					} else {
+						localStorage.username = data.username;
+						localStorage.roles = data.roles;
+						window.location.href = '/index.html';
+					};
+				});
+				return false;
+			});
+			$('#registrationForm').on('submit', function(e){
+				var login = $('#login'),
+					email = $('#email'),
+					password = $('#newPassword'),
+					repPassword = $('#repPassword'),
+					$error = $(this).find('.form-error');
+				login.val() ? login.parents('.form-group').removeClass('has-error') : login.parents('.form-group').addClass('has-error');
+				email.val() ? email.parents('.form-group').removeClass('has-error') : email.parents('.form-group').addClass('has-error');
+				password.val() ? password.parents('.form-group').removeClass('has-error') : password.parents('.form-group').addClass('has-error');
+				repPassword.val() ? repPassword.parents('.form-group').removeClass('has-error') : repPassword.parents('.form-group').addClass('has-error');
+				if (!login.val() || !email.val() || !password.val()) {return false; };
+				if (password.val() != repPassword.val()) {
+					repPassword.parents('.form-group').addClass('has-error');
+					return false;
+				};
+				$.ajax({
+					url: '/users.json/create',
+					type: 'post',
+					dataType: 'json',
+					data: {
+						username: login.val(),
+						email: email.val(),
+						password: password.val()
+					}
+				}).done(function(data) {
+					if (data && data.err) {
+						$error.html(data.err);
+					} else {
+						localStorage.username = login.val();
+						localStorage.roles = ['user'];
+						window.location.href = '/index.html';
+					};
+				});
+				return false;
+			});		
+		});

@@ -1,0 +1,7 @@
+extends ../layout.jade
+block content
+	.container
+		if id
+			.posts(data-model="posts" data-matrix="posts" data-id=id)
+		else
+			.topics(data-model="topics" data-matrix="topics")

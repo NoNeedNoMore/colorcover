@@ -1,0 +1,36 @@
+/*
+body {
+	background: black;
+	text-align: center;
+}
+*/
+.colorcover td {
+	min-width: 30px;
+	min-height: 28px;
+	width: 30px;
+	height: 28px;
+	border: 1px solid black;
+	text-align: center;
+}
+
+.post 
+{
+	border: 1px solid black;
+}
+
+.topic-row 
+{
+	cursor: pointer;
+}
+input.matrix-page
+{
+	width: 40px;
+}
+form.form-settings, form.form-edit
+{
+	display: none;
+}
+a.no-underscore
+{
+	text-decoration: none;
+}
