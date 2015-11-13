@@ -1,36 +1,36 @@
 /*
 body {
-	background: black;
-	text-align: center;
+  background: black;
+  text-align: center;
 }
 */
 .colorcover td {
-	min-width: 30px;
-	min-height: 28px;
-	width: 30px;
-	height: 28px;
-	border: 1px solid black;
-	text-align: center;
+  min-width: 30px;
+  min-height: 28px;
+  width: 30px;
+  height: 28px;
+  border: 1px solid black;
+  text-align: center;
 }
 
-.post 
+.post
 {
-	border: 1px solid black;
+  border: 1px solid black;
 }
 
-.topic-row 
+.topic-row
 {
-	cursor: pointer;
+  cursor: pointer;
 }
-input.matrix-page
+.matrix-page
 {
-	width: 40px;
+  width: 40px;
 }
-form.form-settings, form.form-edit
+.form-settings, .form-edit
 {
-	display: none;
+  display: none;
 }
-a.no-underscore
+.no-underscore
 {
-	text-decoration: none;
+  text-decoration: none;
 }

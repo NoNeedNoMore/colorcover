@@ -1,39 +1,39 @@
 extends ../layout.jade
 block content
-	.container-fluid
-		p
-			textarea#sql.form-control(rows="5")
-		p
-			button#sendSql.btn.btn-default(type="button") Отправить
-		#responseSql(style="overflow: auto; ")
+  .container-fluid
+    p
+      textarea#sql.form-control(rows="5")
+    p
+      button#sendSql.btn.btn-default(type="button") Отправить
+    #responseSql(style="overflow: auto; ")
 block scripts
-	script(type="text/javascript").
-		$(function(){
-			$('#sendSql').on('click',function(e){
-				$('#responseSql').html('');
-				$.ajax({
-					url:'sql.json/services/executeRawSql',
-					type: 'post',
-					data: {sql: $('#sql').val()},
-					dataType: 'json'
-				}).done(function(data){
-					var str = '<span>Строки: ' + data.rowCount + '</span></br>';
-					if (data.err) {$('#responseSql').html(JSON.stringify(data.err)); return;};
-					if (!data.rows.length) {$('#responseSql').html(str); return;};
-					str += '<table class = "table table-bordered table-striped table-hover table-condensed"><thead><tr>';
-					for (var key in data.rows[0]) {
-						str += '<th>' + key + '</th>';
-					};
-					str += '</tr></thead><tbody>';
-					for (var i = 0; i < data.rows.length; i++) {
-						str += '<tr>';
-						for (var key in data.rows[i]) {
-							str += '<td>' + data.rows[i][key] + '</td>';
-						};
-						str += '</tr></tbody>';
-					};
-					str += '</table>';
-					$('#responseSql').html(str);
-				});
-			});
-		});
+  script(type="text/javascript").
+    $(function(){
+      $('#sendSql').on('click',function(e){
+        $('#responseSql').html('');
+        $.ajax({
+          url:'sql.json/services/executeRawSql',
+          type: 'post',
+          data: {sql: $('#sql').val()},
+          dataType: 'json'
+        }).done(function(data){
+          var str = '<span>Строки: ' + data.rowCount + '</span></br>';
+          if (data.err) {$('#responseSql').html(JSON.stringify(data.err)); return;};
+          if (!data.rows.length) {$('#responseSql').html(str); return;};
+          str += '<table class = "table table-bordered table-striped table-hover table-condensed"><thead><tr>';
+          for (var key in data.rows[0]) {
+            str += '<th>' + key + '</th>';
+          };
+          str += '</tr></thead><tbody>';
+          for (var i = 0; i < data.rows.length; i++) {
+            str += '<tr>';
+            for (var key in data.rows[i]) {
+              str += '<td>' + data.rows[i][key] + '</td>';
+            };
+            str += '</tr></tbody>';
+          };
+          str += '</table>';
+          $('#responseSql').html(str);
+        });
+      });
+    });
