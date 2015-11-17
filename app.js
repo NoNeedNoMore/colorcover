@@ -17,7 +17,7 @@ var config = require('./lib/config'),
   }),
   multer = require('multer'),
   http = require('http'),
-  server = http.createServer(app).listen(config.port, function(){console.log(new Date() + " Listening at " + config.port);}),
+  server = http.createServer(app).listen(config.port, () => {console.log(`${new Date()} Listening at ${config.port}`); } ),
   io = require('socket.io').listen(server);
 
 app
@@ -28,28 +28,23 @@ app
   .use ( bodyParser.json() )
   .use ( cookieParser() )
   .use ( expressSession )
-  .use ( function(req, res, next) {req.io = io; next(); } )
+  .use ( (req, res, next) => {req.io = io; next(); } )
   .use ( express.static(__dirname + '/public', { maxAge: config.maxAge }) )
   .use ( multer({dest: __dirname + '/temp/', inMemory: true }) )
-  .get ( '/', function(req, res) {res.redirect(config.homePage); })
+  .get ( '/', (req, res) => {res.redirect(config.homePage); })
   .get ( '/:model.:format/:id?', models.read )
   .post( '/:model.:format/create', models.create )
   .post( '/:model.:format/read/:id?', models.read )
   .post( '/:model.:format/update/:id', models.update )
   .post( '/:model.:format/del/:id', models.del )
   .all ( '/:model.:format/services/:id', models.services )
-  .all ( '*', function(req, res) {res.status(404).render('404'); })
+  .all ( '*', (req, res) => {res.status(404).render('404'); })
   .use ( models.error );
 
-io
-  .on  ( 'connection', function(socket) {
-    socket
-      .on('join', function(data) {
-        socket.join(data.room);
-      })
-      .on('disconnect', function() {});
-  });
-
-process.on('uncaughtException', function(err) {
-  console.log('uncaughtException: ', err);
+io.on( 'connection', socket => {
+  socket
+    .on('join', data => {socket.join(data.room); })
+    .on('disconnect', () => {});
 });
+
+process.on('uncaughtException', err => {console.log('uncaughtException: ', err); });
